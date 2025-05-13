@@ -124,17 +124,21 @@ def text_cipher_combined_view(request):
                     form.add_error('key', 'Key must be an integer for Caesar Cipher.')
 
             elif algo == 'xor':
+                import base64
                 try:
-                    if not key or len(key) != 1:
-                        form.add_error('key', 'Key must be exactly 1 character for XOR Cipher.')
+                    if not key:
+                        form.add_error('key', 'Key must not be empty for XOR Cipher.')
                         raise ValueError('Invalid XOR key.')
 
-                    key_char = key[0]
+                    key_bytes = [ord(k) for k in key]
                     if action == 'encrypt':
-                        result = ''.join(chr(ord(c) ^ ord(key_char)) for c in text)
-                        decrypted = ''.join(chr(ord(c) ^ ord(key_char)) for c in result)
+                        xor_bytes = bytes([ord(c) ^ key_bytes[i % len(key_bytes)] for i, c in enumerate(text)])
+                        result = base64.b64encode(xor_bytes).decode('utf-8')
+                        decrypted_bytes = base64.b64decode(result)
+                        decrypted = ''.join(chr(b ^ key_bytes[i % len(key_bytes)]) for i, b in enumerate(decrypted_bytes))
                     elif action == 'decrypt':
-                        decrypted = ''.join(chr(ord(c) ^ ord(key_char)) for c in text)
+                        decoded_bytes = base64.b64decode(text)
+                        decrypted = ''.join(chr(b ^ key_bytes[i % len(key_bytes)]) for i, b in enumerate(decoded_bytes))
                 except Exception as e:
                     form.add_error(None, f"XOR Cipher Error: {str(e)}")
 
