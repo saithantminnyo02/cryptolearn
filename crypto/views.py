@@ -48,8 +48,9 @@ def rsa_combined_view(request):
     decrypted_ints = None
     encrypted_ints = None
     form = RSAForm(request.POST or None)
-    action = request.POST.get("action") if request.method == "POST" else None  
+    action = request.POST.get("action", "") if request.method == "POST" else ""  
     encrypted_number = None
+    encrypted_char = None
 
     # These must exist in rsa.py
     # def rsa_encrypt_single(m, e, n): return pow(m, e, n)
@@ -62,12 +63,16 @@ def rsa_combined_view(request):
             q = form.cleaned_data['q']
             e = form.cleaned_data['e']
             try:
+                phi_n = (p - 1) * (q - 1)
+                if not (1 < e < phi_n):
+                    raise ValueError(f"Public exponent e must satisfy 1 < e < φ(n) = {phi_n}")
                 public_key, private_key = rsa.generate_keys(p, q, e)
                 if action == 'encrypt':
                     try:
                         msg_int = int(message)
                         encrypted_single = rsa.rsa_encrypt_single(msg_int, *public_key)
                         encrypted_number = encrypted_single
+                        encrypted_char = chr(encrypted_single) if 0 <= encrypted_single <= 1114111 else ''
                     except ValueError:
                         form.add_error('message', 'Input must be a number for integer encryption.')
                 elif action == 'decrypt':
@@ -91,6 +96,7 @@ def rsa_combined_view(request):
         'public_key': public_key,
         'private_key': private_key,
         'encrypted_number': encrypted_number if action == 'encrypt' else None,
+        'encrypted_char': encrypted_char if action == 'encrypt' else None,
     })
 
 def text_cipher_combined_view(request):

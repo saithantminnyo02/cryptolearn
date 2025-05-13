@@ -12,6 +12,8 @@ def modinv(a, m):
 def generate_keys(p, q, e):
     n = p * q
     phi = (p - 1) * (q - 1)
+    if not (1 < e < phi):
+        raise ValueError("e must be greater than 1 and less than φ(n)")
     if gcd(e, phi) != 1:
         raise ValueError("e must be coprime with (p-1)*(q-1)")
     d = modinv(e, phi)

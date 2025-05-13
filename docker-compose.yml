@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     build: .
-    command: gunicorn secureweb.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn secureweb.wsgi:application --bind 0.0.0.0:8000 --timeout 120
     volumes:
       - .:/app
     ports:
