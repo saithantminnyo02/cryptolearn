@@ -105,23 +105,35 @@ def text_cipher_combined_view(request):
             algo = form.cleaned_data['algorithm']
             text = form.cleaned_data['text']
             key = form.cleaned_data['key']
-            try:
-                if algo == 'caesar':
+            # Algorithm logic block (corrected version)
+            if algo == 'caesar':
+                try:
                     shift = int(key)
                     if action == 'encrypt':
                         result = caesar.caesar_encrypt(text, shift)
                         decrypted = caesar.caesar_decrypt(result, shift)
                     elif action == 'decrypt':
                         decrypted = caesar.caesar_decrypt(text, shift)
+                except ValueError:
+                    form.add_error('key', 'Key must be an integer for Caesar Cipher.')
 
-                elif algo == 'xor':
+            elif algo == 'xor':
+                try:
+                    if not key or len(key) != 1:
+                        form.add_error('key', 'Key must be exactly 1 character for XOR Cipher.')
+                        raise ValueError('Invalid XOR key.')
+
+                    key_char = key[0]
                     if action == 'encrypt':
-                        result = xor.xor_encrypt(text, key)
-                        decrypted = xor.xor_decrypt(result, key)
+                        result = ''.join(chr(ord(c) ^ ord(key_char)) for c in text)
+                        decrypted = ''.join(chr(ord(c) ^ ord(key_char)) for c in result)
                     elif action == 'decrypt':
-                        decrypted = xor.xor_decrypt(text, key)
+                        decrypted = ''.join(chr(ord(c) ^ ord(key_char)) for c in text)
+                except Exception as e:
+                    form.add_error(None, f"XOR Cipher Error: {str(e)}")
 
-                elif algo == 'rail':
+            elif algo == 'rail':
+                try:
                     rails = int(key)
                     if rails < 2:
                         form.add_error('key', 'Number of rails must be at least 2.')
@@ -131,8 +143,8 @@ def text_cipher_combined_view(request):
                             decrypted = railfence.rail_fence_decrypt(result, rails)
                         elif action == 'decrypt':
                             decrypted = railfence.rail_fence_decrypt(text, rails)
-            except Exception as ex:
-                form.add_error(None, f"Error: {str(ex)}")
+                except ValueError:
+                    form.add_error('key', 'Key must be a number for Rail Fence Cipher.')
 
     return render(request, 'text_cipher_combined.html', {
         'form': form,
