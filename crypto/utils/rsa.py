@@ -22,3 +22,12 @@ def rsa_encrypt(message, e, n):
 
 def rsa_decrypt(cipher, d, n):
     return ''.join([chr(pow(c, d, n)) for c in cipher])
+
+
+# Encrypt a single integer message m with public key (e, n)
+def rsa_encrypt_single(m, e, n):
+    return pow(m, e, n)
+
+# Decrypt a single integer ciphertext c with private key (d, n)
+def rsa_decrypt_single(c, d, n):
+    return pow(c, d, n)

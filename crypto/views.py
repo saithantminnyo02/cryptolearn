@@ -45,10 +45,17 @@ def rsa_combined_view(request):
     decrypted = None
     public_key = None
     private_key = None
+    decrypted_ints = None
+    encrypted_ints = None
     form = RSAForm(request.POST or None)
+    action = request.POST.get("action") if request.method == "POST" else None  
+    encrypted_number = None
+
+    # These must exist in rsa.py
+    # def rsa_encrypt_single(m, e, n): return pow(m, e, n)
+    # def rsa_decrypt_single(c, d, n): return pow(c, d, n)
 
     if request.method == 'POST':
-        action = request.POST.get("action")
         if form.is_valid():
             message = form.cleaned_data['message']
             p = form.cleaned_data['p']
@@ -57,20 +64,33 @@ def rsa_combined_view(request):
             try:
                 public_key, private_key = rsa.generate_keys(p, q, e)
                 if action == 'encrypt':
-                    encrypted = rsa.rsa_encrypt(message, *public_key)
+                    try:
+                        msg_int = int(message)
+                        encrypted_single = rsa.rsa_encrypt_single(msg_int, *public_key)
+                        encrypted_number = encrypted_single
+                    except ValueError:
+                        form.add_error('message', 'Input must be a number for integer encryption.')
                 elif action == 'decrypt':
-                    # Expect comma-separated numbers as input for ciphertext
-                    ciphertext = list(map(int, message.split(',')))
-                    decrypted = rsa.rsa_decrypt(ciphertext, *private_key)
+                    try:
+                        if ',' in message:
+                            ciphertext = list(map(int, message.split(',')))
+                            decrypted_ints = rsa.rsa_decrypt(ciphertext, *private_key)
+                            decrypted = ''.join(chr(i) for i in decrypted_ints)
+                        else:
+                            decrypted_int = rsa.rsa_decrypt_single(int(message), *private_key)
+                            decrypted = str(decrypted_int)
+                            decrypted_ints = [decrypted_int]
+                    except ValueError:
+                        form.add_error('message', 'Invalid encrypted input format.')
             except Exception as ex:
                 form.add_error(None, str(ex))
 
     return render(request, 'rsa_combined.html', {
         'form': form,
-        'encrypted': encrypted,
         'decrypted': decrypted,
         'public_key': public_key,
         'private_key': private_key,
+        'encrypted_number': encrypted_number if action == 'encrypt' else None,
     })
 
 def text_cipher_combined_view(request):
