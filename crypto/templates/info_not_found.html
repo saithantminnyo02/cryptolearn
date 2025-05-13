@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>🔍 Info Page Not Found</h2>
+<p>We couldn’t find the explanation page for the algorithm "<strong>{{ algo }}</strong>".</p>
+<p>Please check the URL or return to the <a href="{% url 'home' %}">home page</a>.</p>
+{% endblock %}

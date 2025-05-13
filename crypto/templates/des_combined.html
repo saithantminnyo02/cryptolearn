@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">DES (CBC Mode)</h2>
+
+<ul>
+  <li>DES is a symmetric block cipher that processes 64-bit data blocks with a 56-bit key.</li>
+  <li>The algorithm includes initial and final permutations and 16 Feistel rounds with different subkeys.</li>
+  <li>Each round involves expansion, key mixing (XOR), substitution via 8 S-boxes, and permutation.</li>
+  <li>CBC mode improves security by chaining ciphertext blocks and incorporating an IV.</li>
+  <li>Triple DES was introduced to strengthen DES by applying it three times with two or three keys.</li>
+</ul>
+
+<p class="text-muted" style="font-size: 0.9em;">
+  Credit: Summary adapted from lecture notes of DES332: Computer and Network Security, taught by Dr. Nguyen Duy Hung, SIIT.
+</p>
+
+<hr>
+<h3 class="mb-3">Try It Yourself</h3>
+
+<form method="post" class="mb-4">
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ form.as_p }}
+  </div>
+  <button type="submit" name="action" value="encrypt" class="btn btn-primary me-2">Encrypt</button>
+  <button type="submit" name="action" value="decrypt" class="btn btn-secondary">Decrypt</button>
+</form>
+
+{% if encrypted %}
+  <div class="alert alert-success">
+    <h5>Encrypted Text (Base64)</h5>
+    <pre class="mb-0">{{ encrypted }}</pre>
+  </div>
+{% endif %}
+
+{% if error %}
+  <div class="alert alert-danger">
+    <h5>Error</h5>
+    <pre class="mb-0">{{ error }}</pre>
+  </div>
+{% endif %}
+
+{% if decrypted %}
+  <div class="alert alert-info">
+    <h5>Decrypted Text</h5>
+    <pre class="mb-0">{{ decrypted }}</pre>
+  </div>
+{% endif %}
+{% endblock %}

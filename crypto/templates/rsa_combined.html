@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>RSA Encryption</h2>
+
+<ul>
+  <li>RSA is an asymmetric encryption algorithm that uses a public key for encryption and a private key for decryption.</li>
+  <li>It is based on the mathematical difficulty of factoring large integers (product of two primes).</li>
+  <li>Key generation steps:
+    <ul>
+      <li>Choose two large prime numbers: p and q</li>
+      <li>Compute n = p × q and φ(n) = (p − 1)(q − 1)</li>
+      <li>Select a public exponent e such that 1 &lt; e &lt; φ(n) and gcd(e, φ(n)) = 1</li>
+      <li>Compute the private exponent d such that d ≡ e⁻¹ mod φ(n)</li>
+    </ul>
+  </li>
+  <li>Encryption: C = Mᵉ mod n</li>
+  <li>Decryption: M = Cᵈ mod n</li>
+</ul>
+
+<p style="font-size: 0.9em; color: gray;">Credit: Summary adapted from lecture notes of DES332: Computer and Network Security, taught by Dr. Nguyen Duy Hung, SIIT.</p>
+
+<hr>
+<h3>Try It Yourself</h3>
+<p><em>Note:</em> To decrypt a message, enter the encrypted numeric values as a comma-separated list (e.g. <code>123,456,789</code>).</p>
+
+<form method="post" class="mb-4">
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ form.as_p }}
+  </div>
+  <button type="submit" name="action" value="encrypt" class="btn btn-primary me-2">Encrypt</button>
+  <button type="submit" name="action" value="decrypt" class="btn btn-secondary">Decrypt</button>
+</form>
+
+{% if public_key %}
+  <h4>Public Key (e, n)</h4>
+  <pre>{{ public_key }}</pre>
+{% endif %}
+
+{% if private_key %}
+  <h4>Private Key (d, n)</h4>
+  <pre>{{ private_key }}</pre>
+{% endif %}
+
+{% if encrypted %}
+  <div class="alert alert-success">
+    <h5>Encrypted Message</h5>
+    <pre class="mb-0">{{ encrypted }}</pre>
+  </div>
+{% endif %}
+
+{% if decrypted %}
+  <div class="alert alert-info">
+    <h5>Decrypted Message</h5>
+    <pre class="mb-0">{{ decrypted }}</pre>
+  </div>
+{% endif %}
+{% endblock %}

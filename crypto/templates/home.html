@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome to CryptoLearn</h2>
+<p>This platform helps you <strong>learn and experiment</strong> with popular encryption algorithms.</p>
+
+<div class="row">
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Caesar, XOR, Rail Fence</h5>
+        <p class="card-text">Learn and try classical encryption ciphers using simple keys and visual examples.</p>
+        <a href="{% url 'text_combined' %}" class="btn btn-outline-primary">Explore</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">DES Encryption (CBC)</h5>
+        <p class="card-text">Learn how DES works and try encrypting/decrypting with an 8-byte key.</p>
+        <a href="{% url 'des_combined' %}" class="btn btn-outline-success">Explore</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">RSA Encryption</h5>
+        <p class="card-text">Understand how public-key cryptography works and experiment with your own RSA keys.</p>
+        <a href="{% url 'rsa_combined' %}" class="btn btn-outline-dark">Explore</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

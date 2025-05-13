@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Classical Text Ciphers: Caesar / XOR / Rail Fence</h2>
+
+<ul>
+  <li><strong>Caesar Cipher</strong>: Each letter in the plaintext is shifted a fixed number of positions in the alphabet.</li>
+  <li><strong>XOR Cipher</strong>: Applies bitwise XOR between each character of plaintext and key; same function used for encryption and decryption.</li>
+  <li><strong>Rail Fence Cipher</strong>: A transposition cipher that writes characters in a zigzag pattern across multiple rows (rails).</li>
+</ul>
+<p style="font-size: 0.9em; color: gray;">
+  Credit: Summary adapted from lecture notes of DES332: Computer and Network Security, taught by Dr. Nguyen Duy Hung, SIIT.
+</p>
+
+<hr>
+<h3>Try It Yourself</h3>
+
+<form method="post" class="mb-4">
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ form.as_p }}
+  </div>
+  <button type="submit" name="action" value="encrypt" class="btn btn-primary me-2">Encrypt</button>
+  <button type="submit" name="action" value="decrypt" class="btn btn-secondary">Decrypt</button>
+</form>
+
+{% if encrypted %}
+  <div class="alert alert-success">
+    <h5>Encrypted Text</h5>
+    <pre class="mb-0">{{ encrypted }}</pre>
+  </div>
+{% endif %}
+
+{% if decrypted %}
+  <div class="alert alert-info">
+    <h5>Decrypted Text</h5>
+    <pre class="mb-0">{{ decrypted }}</pre>
+  </div>
+{% endif %}
+{% endblock %}
